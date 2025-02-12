@@ -1,8 +1,8 @@
 import React from 'react';
 import { InspectionProvider } from './contexts/InspectionContext';
-import InspectionForm from './components/InspectionForm';
-import ImageUpload from './components/ImageUpload';
-import PDFPreview from './components/PDFPreview';
+import { InspectionForm } from './components/InspectionForm';
+import { ImageUpload } from './components/ImageUpload';
+import { PDFPreview } from './components/PDFPreview';
 
 
 export default function App() {
