@@ -211,7 +211,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 sm:gap-4">
         <label
           htmlFor="file-upload"
-          className={`w-full sm:w-auto cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-sm sm:text-base text-center transition-all duration-200 ${isProcessingImage ? 'opacity-50 cursor-not-allowed' : ''}`}>
+          className="w-full sm:w-auto cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-sm sm:text-base text-center">
           <Upload className="inline-block mr-2" size={16} />
           Upload File
         </label>
