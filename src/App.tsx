@@ -69,9 +69,16 @@ function App() {
       const urls = await pdfGenerator.generatePDF(formData);
       setPdfUrls(urls);
       
-      if (pdfPreviewRef.current) {
-        pdfPreviewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      // Wait for state update and PDF rendering
+      setTimeout(() => {
+        if (pdfPreviewRef.current) {
+          pdfPreviewRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }, 100);
       
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to generate PDF';
