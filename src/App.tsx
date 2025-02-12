@@ -30,7 +30,7 @@ function App() {
   const pdfPreviewRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
-
+  
   const pdfGenerator = PDFGenerator.getInstance();
 
   useEffect(() => {
@@ -52,7 +52,7 @@ function App() {
   const handleTextExtracted = (data: Partial<InspectionFormData>) => {
     logger.info('Updating form with extracted text data');
     setFormData(prev => ({ ...prev, ...data }));
-
+    
     if (window.innerWidth <= 768 && formRef.current) {
       formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -68,7 +68,7 @@ function App() {
 
       const urls = await pdfGenerator.generatePDF(formData);
       setPdfUrls(urls);
-
+      
       // Wait for state update and PDF rendering
       setTimeout(() => {
         if (pdfPreviewRef.current) {
@@ -79,7 +79,7 @@ function App() {
           });
         }
       }, 100);
-
+      
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to generate PDF';
       setError(message);
@@ -96,7 +96,7 @@ function App() {
       setPdfUrls(null);
     }
     logger.info('Reset all form data and image');
-
+    
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -106,7 +106,7 @@ function App() {
   const hasData = !isFormEmpty || imageData !== null;
 
   return (
-    <div className="min-h-screen bg-gray-50" role="main" aria-label="Backflow Inspection Report Application">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <div ref={topRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
@@ -165,7 +165,7 @@ function App() {
               </p>
             </div>
           )}
-
+          
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
             <button
               onClick={handleGenerateReport}
