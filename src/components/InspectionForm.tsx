@@ -20,7 +20,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">

@@ -22,6 +22,22 @@ const initialFormData: InspectionFormData = {
   secondTestNF: false
 };
 
+// Placeholder ProgressIndicator component
+const ProgressIndicator = ({ steps, currentStep }: { steps: string[], currentStep: number }) => {
+  return (
+    <div className="mt-4">
+      <ul className="flex space-x-2">
+        {steps.map((step, index) => (
+          <li key={index} className={`flex items-center justify-center w-12 h-12 rounded-full ${index <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-500'}`}>
+            {index <= currentStep && <span>{index + 1}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+
 function App() {
   const [formData, setFormData] = useState<InspectionFormData>(initialFormData);
   const [imageData, setImageData] = useState<string | null>(null);
@@ -30,7 +46,7 @@ function App() {
   const pdfPreviewRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
-  
+
   const pdfGenerator = PDFGenerator.getInstance();
 
   useEffect(() => {
@@ -52,7 +68,7 @@ function App() {
   const handleTextExtracted = (data: Partial<InspectionFormData>) => {
     logger.info('Updating form with extracted text data');
     setFormData(prev => ({ ...prev, ...data }));
-    
+
     if (window.innerWidth <= 768 && formRef.current) {
       formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -68,11 +84,11 @@ function App() {
 
       const urls = await pdfGenerator.generatePDF(formData);
       setPdfUrls(urls);
-      
+
       if (pdfPreviewRef.current) {
         pdfPreviewRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-      
+
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to generate PDF';
       setError(message);
@@ -89,7 +105,7 @@ function App() {
       setPdfUrls(null);
     }
     logger.info('Reset all form data and image');
-    
+
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -105,9 +121,10 @@ function App() {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
             Backflow Inspection Report
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base px-4">
-            Upload an image or take a photo of your backflow preventer test results to automatically extract inspection data
-          </p>
+          <ProgressIndicator 
+            steps={['Upload Image', 'Fill Details', 'Generate Report']} 
+            currentStep={pdfUrls ? 2 : imageData ? 1 : 0} 
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
@@ -158,7 +175,7 @@ function App() {
               </p>
             </div>
           )}
-          
+
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
             <button
               onClick={handleGenerateReport}

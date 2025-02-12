@@ -41,7 +41,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ previewUrl, downloadUrl, onRese
 
   return (
     <div>
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
         <div className="p-4 sm:p-6 border-b border-gray-100">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Preview Report</h2>
           <p className="text-gray-600 text-xs sm:text-sm mt-1">
