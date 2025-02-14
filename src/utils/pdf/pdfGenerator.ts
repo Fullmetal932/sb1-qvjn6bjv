@@ -14,7 +14,8 @@ const FORM_FIELD_MAPPING: Record<string, string> = {
   test1A: 'PVB Check Valve DP PSID*',
   test1B: 'Line Pressure PSI*',
   test3: 'PVB Air Inlet Opened At*',
-  notes: 'Notes'
+  notes: 'Notes',
+  date: 'Date*'
 };
 
 export class PDFGenerator {
