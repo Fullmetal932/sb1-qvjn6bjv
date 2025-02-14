@@ -9,6 +9,5 @@ export interface InspectionFormData {
   test1B: string;
   test3: string;
   notes: string;
-  date: string;
   secondTestNF: boolean;
 }

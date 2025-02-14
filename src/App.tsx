@@ -19,7 +19,6 @@ const initialFormData: InspectionFormData = {
   test1B: '',
   test3: '',
   notes: '',
-  date: new Date().toISOString().split('T')[0],
   secondTestNF: false
 };
 
