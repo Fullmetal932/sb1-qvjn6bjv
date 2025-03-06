@@ -10,13 +10,22 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
   formData,
   onChange
 }) => {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = event.target;
-    const newValue = type === 'checkbox' ? (event.target as HTMLInputElement).checked : value;
-    
-    onChange({
-      [name]: newValue
-    });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const key = name as keyof InspectionFormData;
+
+    if (type === 'checkbox') {
+      const isChecked = (e.target as HTMLInputElement).checked;
+      onChange({
+        ...formData,
+        [name]: isChecked
+      });
+    } else {
+      onChange({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   return (
@@ -31,7 +40,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
             id="address"
             name="address"
             value={formData.address}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             placeholder="Enter street address"
           />
@@ -46,7 +55,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
             id="city"
             name="city"
             value={formData.city}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             placeholder="Enter city"
           />
@@ -61,7 +70,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
             id="zip"
             name="zip"
             value={formData.zip}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             placeholder="Enter ZIP code"
           />
@@ -76,7 +85,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
             id="deviceType"
             name="deviceType"
             value={formData.deviceType}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             placeholder="Enter device type"
           />
@@ -91,7 +100,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
             id="deviceSize"
             name="deviceSize"
             value={formData.deviceSize}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             placeholder="Enter device size"
           />
@@ -106,7 +115,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
             id="serialNumber"
             name="serialNumber"
             value={formData.serialNumber}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             placeholder="Enter serial number"
           />
@@ -125,7 +134,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
               id="test1A"
               name="test1A"
               value={formData.test1A}
-              onChange={handleChange}
+              onChange={handleInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
               placeholder="Enter test result"
             />
@@ -140,7 +149,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
               id="test1B"
               name="test1B"
               value={formData.test1B}
-              onChange={handleChange}
+              onChange={handleInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
               placeholder="Enter test result"
             />
@@ -155,7 +164,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
               id="test3"
               name="test3"
               value={formData.test3}
-              onChange={handleChange}
+              onChange={handleInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
               placeholder="Enter test result"
             />
@@ -169,7 +178,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
               id="secondTestNF"
               name="secondTestNF"
               checked={formData.secondTestNF}
-              onChange={handleChange}
+              onChange={handleInputChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors duration-200"
             />
             <span className="ml-2 text-sm text-gray-700">Second Test - NF</span>
@@ -185,7 +194,7 @@ const InspectionForm: React.FC<InspectionFormProps> = ({
           id="notes"
           name="notes"
           value={formData.notes}
-          onChange={handleChange}
+          onChange={handleInputChange}
           rows={4}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
           placeholder="Enter any additional notes"
