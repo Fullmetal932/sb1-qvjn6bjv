@@ -206,11 +206,9 @@ function AppContent() {
 
 function App() {
   return (
-    <>
-      <InspectionProvider>
-        <AppContent />
-      </InspectionProvider>
-    </>
+    <InspectionProvider>
+      <AppContent />
+    </InspectionProvider>
   );
 }
 
