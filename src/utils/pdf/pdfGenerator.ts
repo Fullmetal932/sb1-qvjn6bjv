@@ -87,6 +87,10 @@ export class PDFGenerator {
       const pdfDoc = await PDFDocument.load(templateBuffer);
       const form = pdfDoc.getForm();
       
+      // Debug: List all available form fields
+      const fields = form.getFields();
+      logger.info('Available PDF form fields:', fields.map(field => field.getName()));
+      
       // Batch all form field operations
       const fieldOperations = Object.entries(FORM_FIELD_MAPPING).map(([key, formFieldName]) => {
         const value = formData[key as keyof InspectionFormData];
@@ -121,9 +125,12 @@ export class PDFGenerator {
           const field = form.getTextField(fieldName);
           if (field) {
             field.setText(value);
+            logger.info(`Successfully set ${fieldName} to: ${value}`);
+          } else {
+            logger.warn(`Field ${fieldName} not found in PDF form`);
           }
         } catch (error) {
-          logger.warn(`Error setting ${fieldName} field:`, error);
+          logger.error(`Error setting ${fieldName} field:`, error);
         }
       });
 
