@@ -116,7 +116,7 @@ export class PDFGenerator {
 
       // Add current date and time in a single batch
       const dateTimeOperations = [
-        { fieldName: 'Date*', value: this.formatDate(now) },
+        { fieldName: 'Date', value: this.formatDate(now) },
         { fieldName: 'Time', value: this.formatTime(now) }
       ];
 
