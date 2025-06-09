@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, RotateCcw } from 'lucide-react';
+import { Download, RotateCcw, Mail } from 'lucide-react';
 import { Viewer, Worker, SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
@@ -11,10 +11,17 @@ interface PDFPreviewProps {
   previewUrl: string | null;
   downloadUrl: string | null;
   onReset: () => void;
+  onSendToOffice: () => void;
   address?: string;
 }
 
-const PDFPreview: React.FC<PDFPreviewProps> = ({ previewUrl, downloadUrl, onReset, address }) => {
+const PDFPreview: React.FC<PDFPreviewProps> = ({ 
+  previewUrl, 
+  downloadUrl, 
+  onReset, 
+  onSendToOffice,
+  address 
+}) => {
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     sidebarTabs: () => [],
     toolbarPlugin: {
@@ -45,7 +52,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ previewUrl, downloadUrl, onRese
         <div className="p-4 sm:p-6 border-b border-gray-100">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Preview Report</h2>
           <p className="text-gray-600 text-xs sm:text-sm mt-1">
-            Review your inspection report before downloading
+            Review your inspection report before downloading or sending
           </p>
         </div>
         <div className="p-4 sm:p-6">
@@ -62,6 +69,14 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ previewUrl, downloadUrl, onRese
           
           {downloadUrl && (
             <div className="mt-6 flex flex-col sm:flex-row justify-center sm:justify-end gap-4">
+              <button
+                onClick={onSendToOffice}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm text-sm sm:text-base"
+              >
+                <Mail className="mr-2" size={20} />
+                Send to Office
+              </button>
+              
               <a
                 href={downloadUrl}
                 download={getFileName()}
@@ -70,6 +85,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ previewUrl, downloadUrl, onRese
                 <Download className="mr-2" size={20} />
                 Download Report
               </a>
+              
               <button
                 onClick={onReset}
                 className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 shadow-sm text-sm sm:text-base"

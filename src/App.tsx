@@ -87,6 +87,12 @@ function App() {
     }
   };
 
+  const handleSendToOffice = () => {
+    logger.info('Send to Office button clicked');
+    // TODO: Implement send to office workflow in next step
+    console.log('Send to Office functionality will be implemented in Step 4.2');
+  };
+
   const handleReset = () => {
     setFormData(initialFormData);
     setImageData(null);
@@ -206,6 +212,7 @@ function App() {
             previewUrl={pdfUrls?.previewUrl ?? null}
             downloadUrl={pdfUrls?.downloadUrl ?? null}
             onReset={handleReset}
+            onSendToOffice={handleSendToOffice}
             address={formData.address}
           />
         </div>
