@@ -3,8 +3,10 @@ import ImageUpload from './components/ImageUpload';
 import InspectionForm from './components/InspectionForm';
 import PDFPreview from './components/PDFPreview';
 import SendToOfficeModal from './components/SendToOfficeModal';
+import SettingsModal from './components/SettingsModal';
 import { PDFGenerator } from './utils/pdf/pdfGenerator';
-import { FileDown, ClipboardCheck, RotateCcw, AlertCircle } from 'lucide-react';
+import { EmailService } from './services/email.service';
+import { FileDown, ClipboardCheck, RotateCcw, AlertCircle, Settings } from 'lucide-react';
 import { logger } from './utils/logger';
 import type { InspectionFormData } from './types/inspection';
 import type { PDFGeneratorResult } from './types/pdf';
@@ -29,11 +31,14 @@ function App() {
   const [pdfUrls, setPdfUrls] = useState<PDFGeneratorResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showSendToOfficeModal, setShowSendToOfficeModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [isProcessingEmail, setIsProcessingEmail] = useState(false);
   const pdfPreviewRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
 
   const pdfGenerator = PDFGenerator.getInstance();
+  const emailService = EmailService.getInstance();
 
   useEffect(() => {
     return () => {
@@ -98,11 +103,42 @@ function App() {
     setShowSendToOfficeModal(false);
   };
 
-  const handleSendToOfficeConfirm = (recipient: string, recipientName: string) => {
-    logger.info('Send to Office confirmed', { recipient, recipientName });
-    setShowSendToOfficeModal(false);
-    // TODO: Implement email composition in Step 4.3
-    console.log('Email composition will be implemented in Step 4.3', { recipient, recipientName });
+  const handleSendToOfficeConfirm = async (recipient: string, recipientName: string) => {
+    try {
+      setIsProcessingEmail(true);
+      setError(null);
+      logger.info('Send to Office confirmed', { recipient, recipientName });
+
+      if (!pdfUrls?.downloadUrl) {
+        throw new Error('PDF not available. Please generate the report first.');
+      }
+
+      // Fetch the PDF blob from the download URL
+      const response = await fetch(pdfUrls.downloadUrl);
+      const pdfBlob = await response.blob();
+
+      // Validate email for 'other' recipient
+      if (recipient === 'other' && !emailService.validateEmail(recipientName)) {
+        throw new Error('Please enter a valid email address for the custom recipient.');
+      }
+
+      await emailService.composeEmail({
+        recipient,
+        recipientName,
+        address: formData.address || 'Unknown Address',
+        pdfBlob
+      });
+
+      setShowSendToOfficeModal(false);
+      logger.info('Email composition completed successfully');
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to compose email';
+      setError(message);
+      logger.error('Failed to compose email:', error);
+    } finally {
+      setIsProcessingEmail(false);
+    }
   };
 
   const handleReset = () => {
@@ -110,6 +146,7 @@ function App() {
     setImageData(null);
     setError(null);
     setShowSendToOfficeModal(false);
+    setShowSettingsModal(false);
     if (pdfUrls) {
       pdfGenerator.cleanup(pdfUrls);
       setPdfUrls(null);
@@ -127,13 +164,23 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50" role="main" aria-label="Backflow Inspection Report Application">
       <div ref={topRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
-        <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-            Backflow Inspection Report
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base px-4">
-            Upload an image or take a photo of your backflow preventer test results to automatically extract inspection data
-          </p>
+        {/* Header with Settings */}
+        <div className="flex justify-between items-start mb-8 sm:mb-12">
+          <div className="text-center flex-1">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+              Backflow Inspection Report
+            </h1>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base px-4">
+              Upload an image or take a photo of your backflow preventer test results to automatically extract inspection data
+            </p>
+          </div>
+          <button
+            onClick={() => setShowSettingsModal(true)}
+            className="ml-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            title="Settings"
+          >
+            <Settings size={24} />
+          </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
@@ -178,7 +225,7 @@ function App() {
         <div className="flex flex-col items-center justify-center gap-4 mb-8">
           {!isFormEmpty && (
             <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-3 rounded-lg border border-amber-200 max-w-2xl w-full">
-              <AlertCircle className="flex-shrink-0\" size={20} />
+              <AlertCircle className="flex-shrink-0" size={20} />
               <p className="text-sm">
                 Please verify all information in the form is correct before generating the report
               </p>
@@ -236,6 +283,12 @@ function App() {
         onClose={handleSendToOfficeModalClose}
         onSend={handleSendToOfficeConfirm}
         address={formData.address}
+        isProcessing={isProcessingEmail}
+      />
+
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
       />
     </div>
   );

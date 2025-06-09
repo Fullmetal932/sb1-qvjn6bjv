@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { X, Mail, ArrowLeft } from 'lucide-react';
+import { X, Mail, ArrowLeft, Loader2 } from 'lucide-react';
 
 interface SendToOfficeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSend: (recipient: string, recipientName: string) => void;
   address?: string;
+  isProcessing?: boolean;
 }
 
 const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
   isOpen,
   onClose,
   onSend,
-  address
+  address,
+  isProcessing = false
 }) => {
   const [selectedRecipient, setSelectedRecipient] = useState<'supreme' | 'other'>('supreme');
   const [customRecipient, setCustomRecipient] = useState('');
@@ -30,6 +32,7 @@ const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
   };
 
   const handleClose = () => {
+    if (isProcessing) return; // Prevent closing while processing
     setSelectedRecipient('supreme');
     setCustomRecipient('');
     onClose();
@@ -53,7 +56,8 @@ const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
             <div className="flex items-center space-x-3">
               <button
                 onClick={handleClose}
-                className="p-1 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                disabled={isProcessing}
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ArrowLeft size={20} />
               </button>
@@ -70,24 +74,36 @@ const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
             </div>
             <button
               onClick={handleClose}
-              className="p-1 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              disabled={isProcessing}
+              className="p-1 text-gray-400 hover:text-gray-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <X size={20} />
             </button>
           </div>
 
+          {/* Processing indicator */}
+          {isProcessing && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center space-x-2 text-blue-700">
+                <Loader2 className="animate-spin" size={16} />
+                <span className="text-sm">Preparing email...</span>
+              </div>
+            </div>
+          )}
+
           {/* Recipient selection */}
           <div className="space-y-4 mb-6">
             <div className="space-y-3">
               {/* Supreme Sprinklers option */}
-              <label className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+              <label className={`flex items-start space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200 ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 <input
                   type="radio"
                   name="recipient"
                   value="supreme"
                   checked={selectedRecipient === 'supreme'}
                   onChange={(e) => setSelectedRecipient(e.target.value as 'supreme')}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  disabled={isProcessing}
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 disabled:opacity-50"
                 />
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
@@ -101,14 +117,15 @@ const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
               </label>
 
               {/* Other recipient option */}
-              <label className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+              <label className={`flex items-start space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200 ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 <input
                   type="radio"
                   name="recipient"
                   value="other"
                   checked={selectedRecipient === 'other'}
                   onChange={(e) => setSelectedRecipient(e.target.value as 'other')}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  disabled={isProcessing}
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 disabled:opacity-50"
                 />
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
@@ -134,7 +151,8 @@ const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
                   value={customRecipient}
                   onChange={(e) => setCustomRecipient(e.target.value)}
                   placeholder="Enter recipient name or email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  disabled={isProcessing}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   autoFocus
                 />
               </div>
@@ -145,16 +163,27 @@ const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <button
               onClick={handleClose}
-              className="w-full sm:w-auto px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm sm:text-base"
+              disabled={isProcessing}
+              className="w-full sm:w-auto px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
             </button>
             <button
               onClick={handleSend}
-              className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm text-sm sm:text-base flex items-center justify-center space-x-2"
+              disabled={isProcessing}
+              className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm text-sm sm:text-base flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Mail size={16} />
-              <span>Send</span>
+              {isProcessing ? (
+                <>
+                  <Loader2 className="animate-spin" size={16} />
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <>
+                  <Mail size={16} />
+                  <span>Send</span>
+                </>
+              )}
             </button>
           </div>
         </div>
