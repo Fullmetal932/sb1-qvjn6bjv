@@ -225,7 +225,7 @@ function App() {
         <div className="flex flex-col items-center justify-center gap-4 mb-8">
           {!isFormEmpty && (
             <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-3 rounded-lg border border-amber-200 max-w-2xl w-full">
-              <AlertCircle className="flex-shrink-0" size={20} />
+              <AlertCircle className="flex-shrink-0\" size={20} />
               <p className="text-sm">
                 Please verify all information in the form is correct before generating the report
               </p>

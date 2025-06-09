@@ -175,7 +175,7 @@ const SendToOfficeModal: React.FC<SendToOfficeModalProps> = ({
             >
               {isProcessing ? (
                 <>
-                  <Loader2 className="animate-spin" size={16} />
+                  <Loader2 className="animate-spin\" size={16} />
                   <span>Processing...</span>
                 </>
               ) : (
