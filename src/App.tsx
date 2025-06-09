@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ImageUpload from './components/ImageUpload';
 import InspectionForm from './components/InspectionForm';
 import PDFPreview from './components/PDFPreview';
+import SendToOfficeModal from './components/SendToOfficeModal';
 import { PDFGenerator } from './utils/pdf/pdfGenerator';
 import { FileDown, ClipboardCheck, RotateCcw, AlertCircle } from 'lucide-react';
 import { logger } from './utils/logger';
@@ -27,6 +28,7 @@ function App() {
   const [imageData, setImageData] = useState<string | null>(null);
   const [pdfUrls, setPdfUrls] = useState<PDFGeneratorResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showSendToOfficeModal, setShowSendToOfficeModal] = useState(false);
   const pdfPreviewRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
@@ -89,14 +91,25 @@ function App() {
 
   const handleSendToOffice = () => {
     logger.info('Send to Office button clicked');
-    // TODO: Implement send to office workflow in next step
-    console.log('Send to Office functionality will be implemented in Step 4.2');
+    setShowSendToOfficeModal(true);
+  };
+
+  const handleSendToOfficeModalClose = () => {
+    setShowSendToOfficeModal(false);
+  };
+
+  const handleSendToOfficeConfirm = (recipient: string, recipientName: string) => {
+    logger.info('Send to Office confirmed', { recipient, recipientName });
+    setShowSendToOfficeModal(false);
+    // TODO: Implement email composition in Step 4.3
+    console.log('Email composition will be implemented in Step 4.3', { recipient, recipientName });
   };
 
   const handleReset = () => {
     setFormData(initialFormData);
     setImageData(null);
     setError(null);
+    setShowSendToOfficeModal(false);
     if (pdfUrls) {
       pdfGenerator.cleanup(pdfUrls);
       setPdfUrls(null);
@@ -165,7 +178,7 @@ function App() {
         <div className="flex flex-col items-center justify-center gap-4 mb-8">
           {!isFormEmpty && (
             <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-3 rounded-lg border border-amber-200 max-w-2xl w-full">
-              <AlertCircle className="flex-shrink-0\" size={20} />
+              <AlertCircle className="flex-shrink-0" size={20} />
               <p className="text-sm">
                 Please verify all information in the form is correct before generating the report
               </p>
@@ -217,6 +230,13 @@ function App() {
           />
         </div>
       </div>
+
+      <SendToOfficeModal
+        isOpen={showSendToOfficeModal}
+        onClose={handleSendToOfficeModalClose}
+        onSend={handleSendToOfficeConfirm}
+        address={formData.address}
+      />
     </div>
   );
 }
