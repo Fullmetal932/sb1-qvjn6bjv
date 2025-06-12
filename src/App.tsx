@@ -87,6 +87,11 @@ function App() {
     }
   };
 
+  // New handler for the "Send to Office" button
+  const handleSendToOffice = () => {
+    console.log('Send to Office button clicked');
+    // TODO: Implement navigation to SendToOfficePage and pass necessary data (PDF blob/URL, formData)
+  };
   const handleReset = () => {
     setFormData(initialFormData);
     setImageData(null);
@@ -207,6 +212,7 @@ function App() {
             downloadUrl={pdfUrls?.downloadUrl ?? null}
             onReset={handleReset}
             address={formData.address}
+            onSendToOffice={handleSendToOffice} // Pass the new handler here
           />
         </div>
       </div>
